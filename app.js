@@ -2,7 +2,7 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
-
+const { connection } = require('./database/db')
 const { router } = require('./routes/list.routes')
 
 app.use(helmet())

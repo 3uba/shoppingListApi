@@ -1,28 +1,24 @@
-const {connection} = require("../database/db")
+const { connection } = require("../database/db")
 
-const newProduct = (product) => {
-    this.name = product.name
-    this.quantity = product.quantity
-    this.type = product.type
-}
-
-const ProductModel = (product) => {
+function ProductModel(product) {
     this.name = product.name
     this.quantity = product.quantity
     this.type = product.type
     this.mark = product.mark
 }
 
-ProductModel.create = (newProduct, result) => {
-    connection.query("INSERT INTO list SET ?", newProduct, (err, res) => {
-        if (err)  {
+ProductModel.create = (np, result) => {
+    // const query = `// INSERT INTO list (name, quantity, type, mark) VALUES ("${np.name}", "${np.quantity}", "${np.type}", ${np.type})`
+
+    connection.query("INSERT INTO list SET ?", np, (err, res) => {
+        if (err) {
             console.error(err)
             result(err, null)
             return
         }
 
-        console.log("Created tutorial: ", {id: res.insertId, ...newProduct})
-        result(null, { id: res.insertId, ...newProduct })
+        console.log("Created tutorial: ", { id: res.insertId, ...np })
+        result(null, { id: res.insertId, ...np })
     })
 }
 
@@ -37,7 +33,7 @@ ProductModel.findById = (id, result) => {
             result(null, res[0])
             return
         }
-        result({ message: "not found"}, null)
+        result({ message: "not found" }, null)
     })
 }
 
@@ -48,9 +44,36 @@ ProductModel.getAll = (result) => {
             result(err, null)
             return
         }
-
         result(null, res)
     })
 }
 
-module.exports = ProductModel
+ProductModel.delete = (id, result) => {
+    connection.query(`DELETE FROM list WHERE id = ?`, id, (err, res) => {
+        if (err) {
+            console.error(err)
+            result(err, null)
+            return
+        }
+        result(null, {message: "deleted successfully "})
+    })
+}
+
+ProductModel.edit = (id, pr, result) => {
+    connection.query(`UPDATE list SET name = ?, quantity = ?, type = ?, mark = ? WHERE id = ?`,
+        [pr.name, pr.quantity, pr.type, pr.mark, id], (err, res) => {
+        if (err) {
+            console.error(err)
+            result(err, null)
+            return
+        }
+        if (res.affectedRows == 0) {
+            result({message: "nothing updated"})
+            return
+        }
+        result(null, {message: "updated successfully"})
+
+    })
+}
+
+module.exports = ProductModel;
