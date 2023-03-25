@@ -1,18 +1,34 @@
-const mysql = require('mysql')
-const yaml_config = require('node-yaml-config')
+const mysql = require('mysql');
+const yaml_config = require('node-yaml-config');
 
-const config = yaml_config.load(__dirname + 'config.yaml')
+let connection;
 
-const connection = mysql.createConnection({
-    host: config.default.database.host,
-    user: config.default.database.username,
-    password: config.default.database.password,
-    database: config.default.database.database
-})
+const connect = async () => {
+    if (connection) {
+        return connection;
+    }
 
-connection.connect(err => {
-    if (err) throw err
-    console.log("Successfully connected to the database")
-})
+    const config = await yaml_config.loadAsync(__dirname + '/../config.yaml');
 
-module.exports = {connection}
+    connection = mysql.createConnection({
+        host: config.host,
+        user: config.user,
+        password: config.password,
+        database: config.database,
+    });
+
+    return new Promise((resolve, reject) => {
+        connection.connect((err) => {
+            if (err) {
+                reject(err);
+            } else {
+                console.log('Successfully connected to the database');
+                resolve(connection);
+            }
+        });
+    });
+};
+
+module.exports = {
+    connect,
+};

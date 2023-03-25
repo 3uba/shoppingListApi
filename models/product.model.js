@@ -52,3 +52,5 @@ ProductModel.getAll = (result) => {
         result(null, res)
     })
 }
+
+module.exports = ProductModel

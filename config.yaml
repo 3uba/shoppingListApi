@@ -1,6 +1,4 @@
-default:
-  database:
-    host: 'localhost'
-    username: 'root'
-    password: ''
-    database: 'shoppinglist'
+host: "localhost"
+user: "root"
+password: "toor"
+database: "shoppinglist"
